@@ -1,0 +1,61 @@
+  DYNAMIC PRICING MODEL FOR E-COMMERCE WITH REINFORCEMENT LEARNING OF THE PROJECT...
+ 
+                                         E-COMMERCE PROJECT 
+
+
+import numpy as np
+import random
+
+# DEFINE THE ENVIRONMENT...
+class PricingEnvironment:
+    def __init__(self):
+        self.demand = np.random.randint(50, 200)  # Simulated demand
+        self.competitor_price = np.random.uniform(50, 150)  # Simulated competitor price
+   
+    def step(self, price):
+        # Calculate sales based on demand, price, and competitor's price
+        sales = max(0, self.demand - (price - self.competitor_price))
+        reward = sales * price  # Reward is total revenue
+        return reward
+
+# DEFINE Q-LEARNING PARAMETES...
+actions = [50, 75, 100, 125, 150]  # Possible prices
+q_table = np.zeros((200, len(actions)))  # State-action table
+alpha = 0.1  # Learning rate
+gamma = 0.9  # Discount factor
+epsilon = 1.0  # Exploration rate
+min_epsilon = 0.1
+decay = 0.99
+
+#  TRAIN THE AGENT...
+env = PricingEnvironment()
+for episode in range(1000):
+    state = np.random.randint(0, 200)  # Random demand as initial state
+    for _ in range(50):  # Steps per episode
+        if random.uniform(0, 1) < epsilon:  # Explore
+            action = random.choice(range(len(actions)))
+        else:  # EXPLOIT
+            action = np.argmax(q_table[state, :])
+       
+        # TAKE ACTION AND CALCULATE REWARD...
+        price = actions[action]
+        reward = env.step(price)
+        next_state = np.random.randint(0, 200)  # Simulate new demand
+       
+        # UPDATE THTE Q_VALUE
+        q_table[state, action] += alpha * (
+            reward + gamma * np.max(q_table[next_state, :]) - q_table[state, action]
+        )
+       
+        state = next_state
+   
+    # DECAY EPSILON
+    epsilon = max(min_epsilon, epsilon * decay)
+
+# EVALUATE THE AGENT
+print("Q-Table after training:")
+print(q_table)
+
+#  USES OF METHOD
+optimal_price = actions[np.argmax(q_table[np.random.randint(0, 200), :])]
+print(f"Recommended price: {optimal_price}")

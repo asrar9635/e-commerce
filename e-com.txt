@@ -1,6 +1,6 @@
   DYNAMIC PRICING MODEL FOR E-COMMERCE WITH REINFORCEMENT LEARNING OF THE PROJECT...
  
-                                         E-COMMERCE PROJECT 
+                                       
 
 
 import numpy as np
